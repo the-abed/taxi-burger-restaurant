@@ -10,25 +10,87 @@ const loadFoods = (id)=>{
     fetch(url)
     .then(res => res.json())
     .then(data => displayFoodByCategory(data.foods)); 
+
+    const btns = document.querySelectorAll('.btn-category')
+    btns.forEach(btn => btn.classList.remove('active'))
+
+    const currentBtn = document.getElementById(`cat-btn-${id}`)
+    currentBtn.classList.add('active')
+    }
+const loadFoodDetails = (id)=>{
+    const url = ` https://taxi-kitchen-api.vercel.app/api/v1/foods/${id}`
+    fetch(url)
+    .then(res => res.json())
+    .then(data => showFoodDetails(data.details)); 
     }
 
-//     {
-// "id": 52879,
-// "title": "Chicken Parmentier",
-// "catId": 2,
-// "foodImg": "https://www.themealdb.com/images/media/meals/uwvxpv1511557015.jpg",
-// "price": 409,
-// "category": "Chicken"
-// },
+const showFoodDetails = (detail)=>{
+    const detailsContainer = document.getElementById('details-container')
+    detailsContainer.innerHTML = `
+     <h2 class="text-2xl font-bold">${detail.title}</h2>
+        <img class="rounded-lg my-3" src="${detail.foodImg}" alt="">
+        <div class="flex gap-3 items-center">
+            <h2 class="font-bold bg-yellow-400 p-2 rounded-md w-fit">${detail.area}</h2>
+        <a class="btn btn-accent" href="${detail.video}">Watch Video</a>
+        </div>
+    </div>
+    `
+    document.getElementById('my_modal_3').showModal()
+}
+const loadCart = (id)=>{
+    const url = `https://taxi-kitchen-api.vercel.app/api/v1/foods/${id}`
+    fetch(url)
+    .then(res => res.json())
+    .then(data => showCart(data.details))
+    
+}
+let total = 0
+const showCart = (item) =>{
+    
+    const cartContainer = document.getElementById('cart-container')
+   
+    const cart = document.createElement('div');
+    cart.innerHTML = `
+    <div class="p-3 shadow-md rounded-md">
+        <div class="flex gap-3 items-center gap-3">
+            <img width="48px" class="rounded-lg"
+             src="${item.foodImg}" alt="">
+            
+            <div class="flex justify-between gap-2 items-center">
+            <div>
+            <h2 class="text-lg font-bold space-y-2">${item.title} </h2> 
+                <h2 class="text-yellow-500">$ ${item.price} </h2>
+            </div>
+            
+            </div>
+                
+            <span onclick="remove(this)"> ❌ </span>
+            
+          </div>`
+    cartContainer.appendChild(cart);
+    let price = item.price;
+    total = total + price;
+    showTotal(total);
+    
+}
+const showTotal = (value)=>{
+   document.getElementById('cart-total').innerHTML = value;
+}
+const remove = (btn) =>{
+    const item = btn.parentNode.parentNode;
+    
+}
 const displayFoodByCategory = (items)=>{
     const foodContainer = document.getElementById("food-container");
     foodContainer.innerHTML="";
     items.map(item => {
         const foodCard = document.createElement('div')
         foodCard.innerHTML =`
-        <div class="p-5 bg-white flex gap-3 shadow rounded-xl">
+        <div 
+         class="p-5 bg-white flex gap-3 shadow rounded-xl">
             <div class="img flex-1">
               <img
+              onclick = "loadFoodDetails(${item.id})"
                 src="${item.foodImg}"
                 alt=""
                 class="w-[160px] rounded-xl h-[160px] object-cover"
@@ -47,7 +109,7 @@ const displayFoodByCategory = (items)=>{
                 </h2>
               </div>
 
-              <button class="btn btn-warning">
+              <button onclick="loadCart(${item.id})" class="btn btn-warning">
                 <i class="fa-solid fa-square-plus"></i>
                 Add This Item
               </button>
@@ -67,7 +129,7 @@ const displayCategories = (categories) =>{
    for(let category of categories){
     const createCategoryCard = document.createElement('div')
     createCategoryCard.innerHTML = `
-    <button onclick = "loadFoods(${category.id})" class="btn btn-block shadow btn-category">
+    <button id="cat-btn-${category.id}" onclick = "loadFoods(${category.id})" class="btn btn-block shadow btn-category">
             <img
               src="${category.categoryImg}"
               alt=""
@@ -81,3 +143,4 @@ const displayCategories = (categories) =>{
     
 }
 loadCategories()
+loadFoods(8)
