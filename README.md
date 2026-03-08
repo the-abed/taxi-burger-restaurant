@@ -26,6 +26,7 @@ This project demonstrates **front-end web development fundamentals without frame
 
 * **HTML5** – Page structure
 * **CSS3** – Styling and layout
+* **Tailwind CSS**
 * **JavaScript (Vanilla JS)** – Interactivity
 
 ---
